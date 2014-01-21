@@ -3,6 +3,8 @@ window.addEventListener("load", function(ev) {
 	var canvas = document.getElementById("playground"),
     	ctx = canvas.getContext('2d'),
     	img = new Image(),
+    	bg  = new Image(),
+    	bgLoaded = false,
     	rows = 10,
     	cols = 10,
     	sizeCols,
@@ -31,6 +33,10 @@ window.addEventListener("load", function(ev) {
     		this.originX = x;
     		this.originY = y;
     	};
+
+    bg.addEventListener("load", function(ev) {
+    	bgLoaded = true;
+    });
 
 	img.addEventListener("load", function(ev) {
 
@@ -144,6 +150,10 @@ window.addEventListener("load", function(ev) {
 	function draw() {
 		ctx.clearRect(0,0,canvas.width,canvas.height);
 
+		if (bgLoaded) {
+			ctx.drawImage(bg,0,0, canvas.width, canvas.height);
+		}
+
 		for (var i = 0; i < pieces.length; i++) {
 
 			/*
@@ -164,5 +174,6 @@ window.addEventListener("load", function(ev) {
 	}
 
 	//start loading the image and setup the app
-	img.src="./turtle.jpg";
+	bg.src = "./sheep.jpg";
+	img.src = "./turtle.jpg";
 });
