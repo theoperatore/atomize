@@ -5,8 +5,8 @@ window.addEventListener("load", function(ev) {
     	img = new Image(),
     	bg  = new Image(),
     	bgLoaded = false,
-    	rows = 10,
-    	cols = 10,
+    	rows = 100,
+    	cols = 100,
     	sizeCols,
     	sizeRows,
     	pieces = [],
@@ -47,14 +47,6 @@ window.addEventListener("load", function(ev) {
 		 *                                                                                                       *
 		 * *******************************************************************************************************/
 
-
-		//commenting out these two lines decreases framerate substantially due to the large image resolution
-		//img.width /= 2;
-		//img.height /=2;
-
-		canvas.width = img.width;
-		canvas.height = img.height;
-
 		//I think insead of using the image dimensions I should use the canvas dimensions?
 		sizeCols = canvas.width / cols;
 		sizeRows = canvas.height / rows;
@@ -66,6 +58,9 @@ window.addEventListener("load", function(ev) {
 				pieces.push(new Piece( i*sizeCols, j*sizeRows, sizeCols, sizeRows, i * sizeCols, j* sizeRows));
 			}
 		}
+
+		canvas.width = img.width;
+		canvas.height = img.height;
 
 		//setup event Listeners
 		canvas.addEventListener('mousemove', function(ev) {
@@ -79,7 +74,7 @@ window.addEventListener("load", function(ev) {
 					dd = (dx * dx) + (dy * dy);
 					d  = Math.sqrt(dd);
 
-				if (d <= 75) {
+				if (d <= 100) {
 					pieces[i].projectedX = pieces[i].x - dx;
 					pieces[i].projectedY = pieces[i].y - dy;
 				}
@@ -176,4 +171,6 @@ window.addEventListener("load", function(ev) {
 	//start loading the image and setup the app
 	bg.src = "./sheep.jpg";
 	img.src = "./turtle.jpg";
+	//bg.src = "./turtle.jpg";
+	//img.src = "./sheep.jpg";
 });
