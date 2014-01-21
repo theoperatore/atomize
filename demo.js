@@ -17,6 +17,7 @@ window.addEventListener("load", function(ev) {
     	springStrength = 0.1,
     	rotationForce = 0.015,
     	gui = new dat.GUI(),
+    	rS  = new rStats(),
 
     	//px / py is the x and y coords in the img space -- used for slicing
     	//x  / y  is the x and y coords in canvas space
@@ -126,6 +127,11 @@ window.addEventListener("load", function(ev) {
 
 	function update(time) {
 
+		//start profiling this frame
+		rS('frame').start();
+		rS('rAF').tick();
+		rS('FPS').frame();
+
 		//included in case velocity based on time is to be used
 		now = +new Date;
 		var dt = (prev === 0) ? 0 : now - prev;
@@ -133,6 +139,7 @@ window.addEventListener("load", function(ev) {
 
 		//collision detection?
 
+		rS('updateTime').start();
 		//update pieces
 		for (var i = 0; i < pieces.length; i++) {
 			var dx,			//the distance between projectedX and currX of this particle
@@ -162,9 +169,18 @@ window.addEventListener("load", function(ev) {
 			pieces[i].y += pieces[i].dy;
 
 		}
+		rS('updateTime').end();
 
-
+		//profile drawing
+		rS('render').start();
 		draw();
+		rS('render').end();
+
+		//end this frame and update profile gui
+		rS('frame').end();
+		rS().update();
+
+
 		requestAnimationFrame(update);
 	}
 
