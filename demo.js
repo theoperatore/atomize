@@ -4,9 +4,11 @@ window.addEventListener("load", function(ev) {
     	ctx = canvas.getContext('2d'),
     	img = new Image(),
     	bg  = new Image(),
+    	options = {
+    		rows : 100,
+    		cols : 100
+    	},
     	bgLoaded = false,
-    	rows = 100,
-    	cols = 100,
     	sizeCols,
     	sizeRows,
     	pieces = [],
@@ -14,6 +16,7 @@ window.addEventListener("load", function(ev) {
     	prev = 0,
     	springStrength = 0.1,
     	rotationForce = 0.015,
+    	gui = new dat.GUI(),
 
     	//px / py is the x and y coords in the img space -- used for slicing
     	//x  / y  is the x and y coords in canvas space
@@ -40,6 +43,9 @@ window.addEventListener("load", function(ev) {
 
 	img.addEventListener("load", function(ev) {
 
+		var guiControllerRows,
+			guiControllerCols;
+
 		/* *******************************************************************************************************
 		 *                                                                                                       *
 		 * The scaling of the image is incorrect.                                                                *
@@ -47,20 +53,20 @@ window.addEventListener("load", function(ev) {
 		 *                                                                                                       *
 		 * *******************************************************************************************************/
 
-		//I think insead of using the image dimensions I should use the canvas dimensions?
-		sizeCols = canvas.width / cols;
-		sizeRows = canvas.height / rows;
+		function createPieces() {
+			pieces = [];
 
-		for (var i = 0; i < cols; i++) {
-			for (var j = 0; j < rows; j++) {
+			sizeCols = canvas.width / options.cols;
+			sizeRows = canvas.height / options.rows;
+
+			for (var i = 0; i < options.cols; i++) {
+				for (var j = 0; j < options.rows; j++) {
 				
-				//create a new piece to be used to draw
-				pieces.push(new Piece( i*sizeCols, j*sizeRows, sizeCols, sizeRows, i * sizeCols, j* sizeRows));
+					//create a new piece to be used to draw
+					pieces.push(new Piece( i*sizeCols, j*sizeRows, sizeCols, sizeRows, i * sizeCols, j* sizeRows));
+				}
 			}
-		}
-
-		canvas.width = img.width;
-		canvas.height = img.height;
+		};
 
 		//setup event Listeners
 		canvas.addEventListener('mousemove', function(ev) {
@@ -92,6 +98,27 @@ window.addEventListener("load", function(ev) {
 				pieces[i].projectedY = pieces[i].originY;
 			}
 		});
+
+		//initialize
+		createPieces();
+
+		canvas.width = img.width;
+		canvas.height = img.height;
+
+		//setup DAT.GUI
+		guiControllerRows = gui.add(options, "rows").min(1).max(100).step(1);
+		guiControllerCols = gui.add(options, "cols").min(1).max(100).step(1);
+
+		guiControllerRows.onChange(function(value) {
+			options.rows = value;
+			createPieces();
+		});
+
+		guiControllerCols.onChange(function(value) {
+			options.cols = value;
+			createPieces();
+		});
+
 
 		//start animation
 		requestAnimationFrame(update);
