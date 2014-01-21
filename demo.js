@@ -73,7 +73,7 @@ window.addEventListener("load", function(ev) {
 					dd = (dx * dx) + (dy * dy);
 					d  = Math.sqrt(dd);
 
-				if (d <= 250) {
+				if (d <= 75) {
 					pieces[i].projectedX = pieces[i].x - dx;
 					pieces[i].projectedY = pieces[i].y - dy;
 				}
