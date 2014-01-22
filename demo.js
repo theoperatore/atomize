@@ -6,7 +6,8 @@ window.addEventListener("load", function(ev) {
     	bg  = new Image(),
     	options = {
     		rows : 100,
-    		cols : 100
+    		cols : 100,
+    		rcHasChanged : false
     	},
     	bgLoaded = false,
     	sizeCols,
@@ -49,21 +50,6 @@ window.addEventListener("load", function(ev) {
 		var guiControllerRows,
 			guiControllerCols;
 
-		function createPieces() {
-			pieces.length = 0;
-
-			sizeCols = canvas.width / options.cols;
-			sizeRows = canvas.height / options.rows;
-
-			for (var i = 0; i < options.cols; i++) {
-				for (var j = 0; j < options.rows; j++) {
-				
-					//create a new piece to be used to draw
-					pieces.push(new Piece( i*sizeCols, j*sizeRows, sizeCols, sizeRows, i * sizeCols, j* sizeRows));
-				}
-			}
-		};
-
 		//setup event Listeners
 		canvas.addEventListener('mousemove', function(ev) {
 
@@ -80,8 +66,8 @@ window.addEventListener("load", function(ev) {
 			mouseY = null;
 		});
 
-		//initialize
-		createPieces();
+		//initialize pieces
+		createPieces("initialize");
 
 		canvas.width = img.width;
 		canvas.height = img.height;
@@ -90,20 +76,40 @@ window.addEventListener("load", function(ev) {
 		guiControllerRows = gui.add(options, "rows").min(1).max(100).step(1);
 		guiControllerCols = gui.add(options, "cols").min(1).max(100).step(1);
 
-		guiControllerRows.onChange(function(value) {
+		guiControllerRows.onFinishChange(function(value) {
 			options.rows = value;
-			createPieces();
+			options.rcHasChanged = true;
+			//createPieces("rows change");
 		});
 
-		guiControllerCols.onChange(function(value) {
+		guiControllerCols.onFinishChange(function(value) {
 			options.cols = value;
-			createPieces();
+			options.rcHasChanged = true;
+			//createPieces("cols change");
 		});
 
 
 		//start animation
 		requestAnimationFrame(update);
 	});
+
+	function createPieces(stat) {
+		pieces.length = 0;
+
+		sizeCols = canvas.width / options.cols;
+		sizeRows = canvas.height / options.rows;
+
+		for (var i = 0; i < options.cols; i++) {
+			for (var j = 0; j < options.rows; j++) {
+				
+				//create a new piece to be used to draw
+				pieces.push(new Piece( i*sizeCols, j*sizeRows, sizeCols, sizeRows, i * sizeCols, j* sizeRows));
+			}
+		}
+
+		options.rcHasChanged = false;
+		console.log(stat, pieces.length);
+	};
 
 	function update(time) {
 
@@ -118,6 +124,13 @@ window.addEventListener("load", function(ev) {
 		prev = now;
 
 		//collision detection?
+
+		//check to see if rows or cols have changed
+		rS('createPieces').start();
+		if (options.rcHasChanged) {
+			createPieces('update');
+		}
+		rS('createPieces').end();
 
 		rS('updateTime').start();
 		//update pieces
