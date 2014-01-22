@@ -12,6 +12,8 @@ window.addEventListener("load", function(ev) {
     	sizeCols,
     	sizeRows,
     	pieces = [],
+    	mouseX,
+    	mouseY,
     	now,
     	prev = 0,
     	springStrength = 0.1,
@@ -47,13 +49,6 @@ window.addEventListener("load", function(ev) {
 		var guiControllerRows,
 			guiControllerCols;
 
-		/* *******************************************************************************************************
-		 *                                                                                                       *
-		 * The scaling of the image is incorrect.                                                                *
-		 * It seems that I am setting the sliced rectangle's x and y accoring to the unscaled image's x and y    *
-		 *                                                                                                       *
-		 * *******************************************************************************************************/
-
 		function createPieces() {
 			pieces.length = 0;
 
@@ -67,42 +62,22 @@ window.addEventListener("load", function(ev) {
 					pieces.push(new Piece( i*sizeCols, j*sizeRows, sizeCols, sizeRows, i * sizeCols, j* sizeRows));
 				}
 			}
-
-			console.log('reallocating pieces...', pieces.length);
 		};
 
 		//setup event Listeners
 		canvas.addEventListener('mousemove', function(ev) {
-			var mouseX = ev.clientX + document.body.scrollLeft + document.documentElement.scrollLeft,
-				mouseY = ev.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+
+			mouseX = ev.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+			mouseY = ev.clientY + document.body.scrollTop + document.documentElement.scrollTop;
 
 			mouseX -= canvas.offsetLeft;
 			mouseY -= canvas.offsetTop;
-
-			for (var i = 0; i < pieces.length; i++) {
-
-				var dx = mouseX - pieces[i].x,
-					dy = mouseY - pieces[i].y,
-					dd = (dx * dx) + (dy * dy);
-					d  = Math.sqrt(dd);
-
-				if (d <= 100) {
-					pieces[i].projectedX = pieces[i].x - dx;
-					pieces[i].projectedY = pieces[i].y - dy;
-				}
-				else {
-					pieces[i].projectedX = pieces[i].originX;
-					pieces[i].projectedY = pieces[i].originY;
-				}
-			}
 		});
 
 		//reset every piece when the mouse leaves the canvas
 		canvas.addEventListener('mouseleave', function(ev) {
-			for (var i = 0; i < pieces.length; i++) {
-				pieces[i].projectedX = pieces[i].originX;
-				pieces[i].projectedY = pieces[i].originY;
-			}
+			mouseX = null;
+			mouseY = null;
 		});
 
 		//initialize
@@ -147,11 +122,29 @@ window.addEventListener("load", function(ev) {
 		rS('updateTime').start();
 		//update pieces
 		for (var i = 0; i < pieces.length; i++) {
-			var dx,			//the distance between projectedX and currX of this particle
+			var mdx,        //the difference between the point and the mouse x-coord
+				mdy,        //the difference between the point and the mouse y-coord
+				dd,         //distance squared between point and mouse
+				d,			//the distance between the point and mouse
+				dx,			//the distance between projectedX and currX of this particle
 				dy,			//the distance between projectedY and currY of this particle
 				impulseX,	//calculated force orthogonal to dx
 				impulseY;	//calculated force orthogonal to dy
 
+			//calculate new projected point
+			mdx = (mouseX === null ) ? -550 : mouseX - pieces[i].x;
+			mdy = (mouseY === null ) ? -550 : mouseY - pieces[i].y;
+			dd  = (mdx * mdx) + (mdy * mdy);
+			d   = Math.sqrt(dd);
+
+			if (d <= 100) {
+				pieces[i].projectedX = pieces[i].x - mdx;
+				pieces[i].projectedY = pieces[i].y - mdy;
+			}
+			else {
+				pieces[i].projectedX = pieces[i].originX;
+				pieces[i].projectedY = pieces[i].originY;
+			}
 
 			//get the change in pos from where the piece is currently, and where it is projected to be
 			dx = pieces[i].projectedX - pieces[i].x;
