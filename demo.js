@@ -38,9 +38,9 @@ window.addEventListener("load", function(ev) {
     		this.originY = y;
     	};
 
-    bg.addEventListener("load", function(ev) {
-    	bgLoaded = true;
-    });
+	bg.addEventListener("load", function(ev) {
+		bgLoaded = true;
+	});
 
 	img.addEventListener("load", function(ev) {
 
@@ -55,7 +55,7 @@ window.addEventListener("load", function(ev) {
 		 * *******************************************************************************************************/
 
 		function createPieces() {
-			pieces = [];
+			pieces.length = 0;
 
 			sizeCols = canvas.width / options.cols;
 			sizeRows = canvas.height / options.rows;
@@ -67,6 +67,8 @@ window.addEventListener("load", function(ev) {
 					pieces.push(new Piece( i*sizeCols, j*sizeRows, sizeCols, sizeRows, i * sizeCols, j* sizeRows));
 				}
 			}
+
+			console.log('reallocating pieces...', pieces.length);
 		};
 
 		//setup event Listeners
