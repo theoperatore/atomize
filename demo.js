@@ -71,8 +71,11 @@ window.addEventListener("load", function(ev) {
 
 		//setup event Listeners
 		canvas.addEventListener('mousemove', function(ev) {
-			var mouseX = ev.pageX,
-				mouseY = ev.pageY;
+			var mouseX = ev.clientX + document.body.scrollLeft + document.documentElement.scrollLeft,
+				mouseY = ev.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+
+			mouseX -= canvas.offsetLeft;
+			mouseY -= canvas.offsetTop;
 
 			for (var i = 0; i < pieces.length; i++) {
 
