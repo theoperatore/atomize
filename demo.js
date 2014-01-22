@@ -7,7 +7,10 @@ window.addEventListener("load", function(ev) {
     	options = {
     		rows : 100,
     		cols : 100,
-    		rcHasChanged : false
+    		rcHasChanged : false,
+    		springStrength : 0.1,
+    		rotationForce : 0.02,
+    		friction : 0.5
     	},
     	bgLoaded = false,
     	sizeCols,
@@ -17,8 +20,6 @@ window.addEventListener("load", function(ev) {
     	mouseY,
     	now,
     	prev = 0,
-    	springStrength = 0.1,
-    	rotationForce = 0.015,
     	gui = new dat.GUI(),
     	rS  = new rStats(),
 
@@ -34,7 +35,6 @@ window.addEventListener("load", function(ev) {
     		this.dx = 0;
     		this.dy = 0;
     		this.mass = 1;
-    		this.friction = 0.85;
     		this.projectedX = x;
     		this.projectedY = y;
     		this.originX = x;
@@ -164,16 +164,16 @@ window.addEventListener("load", function(ev) {
 			dy = pieces[i].projectedY - pieces[i].y;
 
 			//calculate spring impulses 
-			impulseX = (dx * springStrength) - (dy * rotationForce);
-			impulseY = (dy * springStrength) + (dx * rotationForce);
+			impulseX = (dx * options.springStrength) - (dy * options.rotationForce);
+			impulseY = (dy * options.springStrength) + (dx * options.rotationForce);
 
 			//apply spring impulses
 			pieces[i].dx += impulseX;
 			pieces[i].dy += impulseY;
 
 			//dampen velocity
-			pieces[i].dx *= pieces[i].friction;
-			pieces[i].dy *= pieces[i].friction;
+			pieces[i].dx *= options.friction;
+			pieces[i].dy *= options.friction;
 
 			//update piece's new position
 			pieces[i].x += pieces[i].dx;
