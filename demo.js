@@ -8,9 +8,9 @@ window.addEventListener("load", function(ev) {
     		rows : 100,
     		cols : 100,
     		rcHasChanged : false,
-    		springStrength : 0.1,
-    		rotationForce : 0.02,
-    		friction : 0.5
+    		springStrength : 0.25,
+    		rotationForce : 0.01,
+    		dampen : 0.35
     	},
     	bgLoaded = false,
     	sizeCols,
@@ -75,6 +75,9 @@ window.addEventListener("load", function(ev) {
 		//setup DAT.GUI
 		guiControllerRows = gui.add(options, "rows").min(1).max(100).step(1);
 		guiControllerCols = gui.add(options, "cols").min(1).max(100).step(1);
+		gui.add(options, "springStrength").min(0.0).max(0.5).step(0.01);
+		gui.add(options, "rotationForce").min(0.0).max(0.2).step(0.01);
+		gui.add(options, "dampen").min(0.1).max(1).step(0.01);
 
 		guiControllerRows.onFinishChange(function(value) {
 			options.rows = value;
@@ -172,8 +175,8 @@ window.addEventListener("load", function(ev) {
 			pieces[i].dy += impulseY;
 
 			//dampen velocity
-			pieces[i].dx *= options.friction;
-			pieces[i].dy *= options.friction;
+			pieces[i].dx *= options.dampen;
+			pieces[i].dy *= options.dampen;
 
 			//update piece's new position
 			pieces[i].x += pieces[i].dx;
