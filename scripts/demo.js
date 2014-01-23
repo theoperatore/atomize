@@ -41,6 +41,12 @@ window.addEventListener("load", function(ev) {
     		this.originY = y;
     	};
 
+    //try some canvas rendering options
+    ctx.mozImageSmoothingEnabled = false;
+	ctx.webkitImageSmoothingEnabled = false;
+	ctx.msImageSmoothingEnabled = false;
+	ctx.imageSmoothingEnabled = false;
+
 	bg.addEventListener("load", function(ev) {
 		bgLoaded = true;
 	});
@@ -226,8 +232,8 @@ window.addEventListener("load", function(ev) {
 	}
 
 	//start loading the image and setup the app
-	bg.src = "./sheep.jpg";
-	img.src = "./turtle.jpg";
+	bg.src = "./images/sheep.jpg";
+	img.src = "./images/turtle.jpg";
 	//bg.src = "./turtle.jpg";
 	//img.src = "./sheep.jpg";
 });
