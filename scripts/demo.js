@@ -11,7 +11,8 @@ window.addEventListener("load", function(ev) {
     		springStrength : 0.25,
     		rotationForce : 0.01,
     		dampen : 0.35,
-    		revealRadius: 75
+    		revealRadius: 75,
+    		useRounding : true
     	},
     	bgLoaded = false,
     	sizeCols,
@@ -87,6 +88,7 @@ window.addEventListener("load", function(ev) {
 		gui.add(options, "rotationForce").min(0.0).max(0.2).step(0.01);
 		gui.add(options, "dampen").min(0.1).max(1).step(0.01);
 		gui.add(options, "revealRadius").min(1).max(350).step(1);
+		gui.add(options, "useRounding");
 
 		guiControllerRows.onFinishChange(function(value) {
 			options.rows = value;
@@ -108,8 +110,8 @@ window.addEventListener("load", function(ev) {
 	function createPieces(stat) {
 		pieces.length = 0;
 
-		sizeCols = Math.round(canvas.width / options.cols);
-		sizeRows = Math.round(canvas.height / options.rows);
+		sizeCols = (options.useRounding) ? Math.round(canvas.width / options.cols) : canvas.width / options.cols;
+		sizeRows = (options.useRounding) ? Math.round(canvas.height / options.rows) : canvas.height / options.rows;
 
 		for (var i = 0; i < options.cols; i++) {
 			for (var j = 0; j < options.rows; j++) {
