@@ -10,7 +10,8 @@ window.addEventListener("load", function(ev) {
     		rcHasChanged : false,
     		springStrength : 0.25,
     		rotationForce : 0.01,
-    		dampen : 0.35
+    		dampen : 0.35,
+    		revealRadius: 75
     	},
     	bgLoaded = false,
     	sizeCols,
@@ -18,6 +19,7 @@ window.addEventListener("load", function(ev) {
     	pieces = [],
     	mouseX,
     	mouseY,
+    	anim,
     	now,
     	prev = 0,
     	gui = new dat.GUI(),
@@ -72,11 +74,11 @@ window.addEventListener("load", function(ev) {
 			mouseY = null;
 		});
 
-		//initialize pieces
-		createPieces("initialize");
-
 		canvas.width = img.width;
 		canvas.height = img.height;
+
+		//initialize pieces
+		createPieces("initialize");
 
 		//setup DAT.GUI
 		guiControllerRows = gui.add(options, "rows").min(1).max(100).step(1);
@@ -84,6 +86,7 @@ window.addEventListener("load", function(ev) {
 		gui.add(options, "springStrength").min(0.0).max(0.5).step(0.01);
 		gui.add(options, "rotationForce").min(0.0).max(0.2).step(0.01);
 		gui.add(options, "dampen").min(0.1).max(1).step(0.01);
+		gui.add(options, "revealRadius").min(1).max(350).step(1);
 
 		guiControllerRows.onFinishChange(function(value) {
 			options.rows = value;
@@ -99,14 +102,14 @@ window.addEventListener("load", function(ev) {
 
 
 		//start animation
-		requestAnimationFrame(update);
+		anim = requestAnimationFrame(update);
 	});
 
 	function createPieces(stat) {
 		pieces.length = 0;
 
-		sizeCols = canvas.width / options.cols;
-		sizeRows = canvas.height / options.rows;
+		sizeCols = Math.round(canvas.width / options.cols);
+		sizeRows = Math.round(canvas.height / options.rows);
 
 		for (var i = 0; i < options.cols; i++) {
 			for (var j = 0; j < options.rows; j++) {
@@ -117,7 +120,6 @@ window.addEventListener("load", function(ev) {
 		}
 
 		options.rcHasChanged = false;
-		console.log(stat, pieces.length);
 	};
 
 	function update(time) {
@@ -133,6 +135,7 @@ window.addEventListener("load", function(ev) {
 		prev = now;
 
 		//collision detection?
+		//update spacial partitions?
 
 		//check to see if rows or cols have changed
 		rS('createPieces').start();
@@ -159,7 +162,7 @@ window.addEventListener("load", function(ev) {
 			dd  = (mdx * mdx) + (mdy * mdy);
 			d   = Math.sqrt(dd);
 
-			if (d <= 100) {
+			if (d <= options.revealRadius) {
 				pieces[i].projectedX = pieces[i].x - mdx;
 				pieces[i].projectedY = pieces[i].y - mdy;
 			}
