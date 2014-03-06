@@ -5,8 +5,8 @@ window.addEventListener("load", function(ev) {
     	img = new Image(),
     	bg  = new Image(),
     	options = {
-    		rows : 100,
-    		cols : 100,
+    		rows : 50,
+    		cols : 50,
     		rcHasChanged : false,
     		springStrength : 0.25,
     		rotationForce : 0.01,
