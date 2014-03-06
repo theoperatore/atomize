@@ -12,7 +12,7 @@ window.addEventListener("load", function(ev) {
     		rotationForce : 0.01,
     		dampen : 0.35,
     		revealRadius: 75,
-    		useRounding : true
+    		useRounding : false
     	},
     	bgLoaded = false,
     	sizeCols,
